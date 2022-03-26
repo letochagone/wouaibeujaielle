@@ -185,7 +185,7 @@
     for(let i=0 ; i < canvas.width*canvas.height*4; i++) {   
       canvasWebGLDataArray[i]=Math.round((pixels[i]/255 + Number.EPSILON) * 1000) / 1000;
     }
-    for (let i=0 ; i<canvas.width*canvas.height; i++) {
+    for (let i=0 ; i< canvas.width*canvas.height; i++) {
       log(canvasWebGLDataArray.slice(i*4,i*4+4));
     }
 
