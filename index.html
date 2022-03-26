@@ -4,13 +4,13 @@
 
 <h1>WebGL</h1>
 
-<p>rfejgej gjejegjre 
+<p>rfejgej gjejegjre
 	<code>
 		const canvas = document.querySelector("#WebGLCanvas");
-    canvas.width = 7;
-    canvas.height = 7;
-
-    let gl = canvas.getContext("webgl", {
+		canvas.width = 7;
+		canvas.height = 7;
+		
+		let gl = canvas.getContext("webgl", {
       premultipliedAlpha: true, // "true" est la valeur par défaut
       antialias:false
     });
@@ -38,7 +38,8 @@
       void main() {
         gl_Position = vec4(coordinates, 1) ;
 
-      }`;
+      }
+		`;
     let vertShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertShader, vertCode);
     gl.compileShader(vertShader);
@@ -48,7 +49,8 @@
       void main() {
         gl_FragColor = u_fragColor;
         gl_FragColor.rgb *= u_fragColor.a;
-      }`;
+      }
+		`;
     let fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragShader, fragCode);
     gl.compileShader(fragShader);
@@ -80,9 +82,8 @@
     calcul de la couleur écran du clearColor :
      (paint .net donne : 0.31 , 0.70 , 0.34)
      (readPixel donne 0.271 , 0.42 , 0.18 , 0.6)
-    
-
-    co = cs + Cb ab (1-as)
+		
+		co = cs + Cb ab (1-as)
        { cs=Cs/as : couleur du clearColor , Cb : couleur du canvas }
        = (0.27 , 0.42 , 0.18)  + ( 0.106 , 0.7 , 0.392) * 1.0 * (1-0.6)
        = ( 0.3124 , 0.7 , 0.34 )
