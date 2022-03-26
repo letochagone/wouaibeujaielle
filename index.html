@@ -3,12 +3,12 @@
 <body>
 
 <h1>WebGL</h1>
-	<pre><code class="language-javascript">
+  <pre><code class="language-javascript">
     const canvas = document.querySelector("#WebGLCanvas");
-		canvas.width = 7;
+    canvas.width = 7;
 		canvas.height = 7;
-		
-		let gl = canvas.getContext("webgl", {
+    
+    let gl = canvas.getContext("webgl", {
       premultipliedAlpha: true, // "true" est la valeur par défaut
       antialias:false
     });
