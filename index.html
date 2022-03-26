@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<style>
+ canvas {
+  xbackground-color: rgb(255,255,255);
+}
+</style>
+<body>
+<canvas id="A"></canvas>
+<canvas id="B"></canvas>
+<canvas id="C"></canvas>
+
+
+<script>
+  let canvasA = document.getElementById('A');
+  let canvasB = document.getElementById('B');
+  let canvasC = document.getElementById('C');
+
+  let ctx_A = canvasA.getContext('2d');
+  let ctx_B = canvasB.getContext('2d');
+  let ctx_C = canvasC.getContext('2d');
+
+  ctx_A.globalAlpha = 0.3;
+  ctx_A.fillStyle='rgba(255,0,0,0.4)';
+  ctx_A.fillRect(0,0,300,150);
+
+  ctx_A.fillStyle='rgba(100,100,0,0.7)';
+  ctx_A.fillRect(0,0,100,50);
+
+// paint .net donne (1, 0.878... , 0.878...)
+
+  var Cs_=[1,0,0];
+  var as_=0.4*0.3;
+  var Cb_=[1,1,1];
+  var ab_=1;
+
+  var co_=[
+    Cs_[0]*as_ + Cb_[0] * ab_ * (1-as_) ,
+    Cs_[1]*as_ + Cb_[1] * ab_ * (1-as_) ,
+    Cs_[2]*as_ + Cb_[2] * ab_ * (1-as_) 
+  ];
+  var  ao_ = as_ + ab_ * (1-as_);
+
+  console.log("couleur avec globalAlpha : "+ co_[0] + "," + co_[1] + "," + co_[2] + "," + ao_);
+
+
+  Cs_=[100/255,100/255,0];
+  as_=0.7*0.3;
+  Cb_=[1,0.88,0.88];
+  ab_=1;
+
+  co_=[
+    Cs_[0]*as_ + Cb_[0] * ab_ * (1-as_) ,
+    Cs_[1]*as_ + Cb_[1] * ab_ * (1-as_) ,
+    Cs_[2]*as_ + Cb_[2] * ab_ * (1-as_) 
+  ];
+  ao_ = as_ + ab_ * (1-as_);
+
+  console.log("couleur petit rectangle : "+ co_[0] + "," + co_[1] + "," + co_[2] + "," + ao_);
+
+
+/*
+var canvasA = document.getElementById('A');
+var canvasB = document.getElementById('B');
+
+// The target canvas
+var canvasC = document.getElementById('C');
+var ctx = canvasC.getContext('2d');
+ctx.drawImage(canvasA, 0,0);
+ctx.globalAlpha = 0.5;
+ctx.drawImage(canvasB,0, 0);
+*/
+
+  ctx_B.fillStyle='rgba(0,255,0,0.5)';
+  ctx_B.fillRect(0,0,300,150);
+
+ ctx_C.globalAlpha = 1;
+  ctx_C.drawImage(canvasA, 0,0);
+
+
+console.log("ctx_A.getImageData :");
+console.log(ctx_A.getImageData(50, 50, 1,1));
+
+
+</script>
+
+</body>
+</html>
+
+
