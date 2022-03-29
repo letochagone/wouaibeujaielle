@@ -180,9 +180,20 @@
     gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
     let canvasWebGLDataArray = new Array(canvas.width * canvas.height * 4);
 
-    for(let i=0 ; i < canvas.width*canvas.height*4; i++) {   
-      canvasWebGLDataArray[i] = Math.round( ( pixels[i]/255 + Number.EPSILON ) * 1000) / 1000;
+    for(let i=0 ; i < canvas.width * canvas.height*4 ; i++) {   
+      canvasWebGLDataArray[i] = Math.round( ( pixels[i] / 255 + Number.EPSILON ) * 1000) / 1000;
     }
+    
+    let i=0;
+    let pixels1=canvasWebGLDataArray.slice( i * 4 , i * 4 + 4);
+    log(pixels1);
+    for (let i=1 ; i < canvas.width * canvas.height; i++) {
+      let pixels2 = canvasWebGLDataArray.slice(i*4,i*4+4);
+      if ( JSON.stringify(pixels1) != JSON.stringify(pixels2)) log(pixels2);
+      pixels1 = pixels2;
+
+    }
+
     for (let i=0 ; i< canvas.width*canvas.height; i++) {
       log(canvasWebGLDataArray.slice(i*4,i*4+4));
     }
