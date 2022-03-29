@@ -105,8 +105,21 @@
 
     résultat identique à celui de Color cop.
 
-
     */
+    
+  let Cs_=[0.27 , 0.42 , 0.18];
+  let as_=0.6;
+  let Cb_=[0.106 , 0.7 , 0.392];
+  let ab_=1;
+
+  let co_=[
+    Cs_[0] + Cb_[0] * ab_ * (1-as_) ,
+    Cs_[1] + Cb_[1] * ab_ * (1-as_) ,
+    Cs_[2] + Cb_[2] * ab_ * (1-as_) 
+  ];
+  let  ao_ = as_ + ab_ * (1-as_);
+
+  console.log("couleur écran du clearColor  : "+ co_[0] + "," + co_[1] + "," + co_[2] + "," + ao_);
  
     gl.viewport(0,0,WebGLCanvas.width,WebGLCanvas.height);
 
