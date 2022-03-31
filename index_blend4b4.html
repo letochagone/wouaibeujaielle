@@ -94,32 +94,26 @@
 
     /*
     calcul de la couleur écran du clearColor :
-     (paint .net donne : 0.31 , 0.70 , 0.34)
-     (readPixel donne 0.271 , 0.42 , 0.18 , 0.6)
-    
 
     co = cs + Cb ab (1-as)
-       { cs=Cs/as : couleur du clearColor , Cb : couleur du canvas }
-       = (0.27 , 0.42 , 0.18)  + ( 0.106 , 0.7 , 0.392) * 1.0 * (1-0.6)
-       = ( 0.3124 , 0.7 , 0.34 )
-
-    résultat identique à celui de Color cop.
+      { cs=Cs/as : couleur du clearColor , Cb : couleur du canvas }
+      = (0.27 , 0.42 , 0.18)  + ( 0.106 , 0.7 , 0.392) * 1.0 * (1-0.6)
+      = ( 0.3124 , 0.7 , 0.34 )
 
     */
-    
-  let Cs_=[0.27 , 0.42 , 0.18];
-  let as_=0.6;
-  let Cb_=[0.106 , 0.7 , 0.392];
-  let ab_=1;
+    let Cs_=[0.27 , 0.42 , 0.18];
+    let as_=0.6;
+    let Cb_=[0.106 , 0.7 , 0.392];
+    let ab_=1;
 
-  let co_=[
-    Cs_[0] + Cb_[0] * ab_ * (1-as_) ,
-    Cs_[1] + Cb_[1] * ab_ * (1-as_) ,
-    Cs_[2] + Cb_[2] * ab_ * (1-as_) 
-  ];
-  let  ao_ = as_ + ab_ * (1-as_);
+    let co_=[
+      Cs_[0] + Cb_[0] * ab_ * (1-as_) ,
+      Cs_[1] + Cb_[1] * ab_ * (1-as_) ,
+      Cs_[2] + Cb_[2] * ab_ * (1-as_) 
+    ];
+    let  ao_ = as_ + ab_ * (1-as_);
 
-  log("couleur écran du clearColor  : "+ co_[0] + "," + co_[1] + "," + co_[2] + "," + ao_);
+    log("couleur écran du clearColor  : "+ co_[0] + "," + co_[1] + "," + co_[2] + "," + ao_);
  
     gl.viewport(0,0,WebGLCanvas.width,WebGLCanvas.height);
 
@@ -127,10 +121,10 @@
 
     gl.uniform4f(u_FragColor, 1.0,0,0,0.5);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-      -1+5/7, -1+9/7,
-      -1+5/7,-1+3/7,
-       -1+11/7,-1+3/7,
-       -1+11/7, -1+9/7 
+        -1+5/7, -1+9/7,
+        -1+5/7,-1+3/7,
+        -1+11/7,-1+3/7,
+        -1+11/7, -1+9/7 
     ]), gl.STATIC_DRAW);   
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT,0);
     /*
@@ -154,15 +148,61 @@
       paint .net donne : (0.3647 , 0.447 , 0.184) ! pareil !!  youpi de ouf
     */
 
+    //calcul couleur écran du carré rouge :
+    log("color(RGBA) = (sourceColor * sfactor) + (destinationColor * dfactor)"); 
+    let sourceColor={r:0.5 , g:0 , b:0, a:0.5};
+    let destinationColor = {r: 0.27, g: 0.42, b: 0.18, a: 0.6};
+    let sfactor = {  //SRC_ALPHA
+      r: sourceColor.a,
+      g: sourceColor.a,
+      b: sourceColor.a,
+      a: sourceColor.a
+    }; 
 
-    gl.uniform4f(u_FragColor, 0,1.0,0,0.5);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    let dfactor = //DST_COLOR
+      destinationColor;
+  
+    let prod = (c1,c2)=>({r: c1.r*c2.r, g: c1.g*c2.g, b: c1.b*c2.b, a: c1.a*c2.a});
+    let som = (c1,c2)=>({r: c1.r+c2.r, g: c1.g+c2.g, b: c1.b+c2.b, a: c1.a+c2.a});
+
+    let prodRgbK = (c1,k)=>({r: c1.r*k, g: c1.g*k, b: c1.b*k});
+    let prodRgb = (c1,c2)=>({r: c1.r*c2.r, g: c1.g*c2.g, b: c1.b*c2.b});
+    let somRgb = (c1,c2)=>({r: c1.r+c2.r, g: c1.g+c2.g, b: c1.b+c2.b});
+
+
+    let colorRGBA= som(
+      prod(sourceColor,sfactor),
+      prod(destinationColor,dfactor)
+    );
+    log2(colorRGBA);
+    //calcul du compositing :
+    //co = cs + Cb ab (1-as) ; on a posé cs et non Cs as
+    // cs et as sont le résultat colorRGBA
+    let cs= {r: colorRGBA.r , g: colorRGBA.g , b: colorRGBA.b};
+    let as= colorRGBA.a;
+    // Cb et ab sont la couleur du canvas , background-color: rgb(27,177,100);
+    let Cb={r: 27/255 , g: 177/255, b: 100/255};
+    let ab= 1;
+    let co= somRgb(
+      cs,
+      prodRgbK(
+        Cb,
+        ab*(1-as)
+        )
+      );
+
+    let dec3 = x=>Math.round(x*1000)*0.001;
+
+    log2({r: dec3(co.r), g: dec3(co.g), b: dec3(co.b)});
+
+  gl.uniform4f(u_FragColor, 0,1.0,0,0.5);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
       -1+7/7, -1+11/7,
       -1+7/7,-1+5/7,
        -1+13/7,-1+5/7,
        -1+13/7, -1+11/7 
     ]), gl.STATIC_DRAW);
-    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT,0);
+  gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT,0);
     /*
     calcul de la couleur du carré vert sur le carré rouge :
       paint .net donne ( 0.145 , 0.54 , 0.145 )
@@ -230,9 +270,23 @@
     }
 
 
-    function log(...args) {
+function log2(args) {
+  const elem = document.createElement("pre");
+  elem.innerHTML = [...Object.values(args)].join(' ');
+  document.body.appendChild(elem);
+}
+
+ //   function log(...args) {
+  function log(...args) {
       const elem = document.createElement("pre");
-      elem.textContent = [...args].join(' ');
+      //elem.textContent = [...args].join(' ');
+     // elem.textContent = [...Object.values(args)].join(' ');
+            elem.innerHTML = [...Object.values(args)].join(' ');
+//console.log(Object.values(args));
+//console.log(args);
+         //   elem.innerHTML = [...args].join(' ');
+
+       //document.getElementById("demo").innerHTML = person; 
       document.body.appendChild(elem);
     }
 </script>
