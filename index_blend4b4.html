@@ -101,20 +101,31 @@
       = ( 0.3124 , 0.7 , 0.34 )
 
     */
-    let Cs_=[0.27 , 0.42 , 0.18];
-    let as_=0.6;
-    let Cb_=[0.106 , 0.7 , 0.392];
-    let ab_=1;
+    let prod = (c1,c2)=>({r: c1.r*c2.r, g: c1.g*c2.g, b: c1.b*c2.b, a: c1.a*c2.a});
+    let som = (c1,c2)=>({r: c1.r+c2.r, g: c1.g+c2.g, b: c1.b+c2.b, a: c1.a+c2.a});
 
-    let co_=[
-      Cs_[0] + Cb_[0] * ab_ * (1-as_) ,
-      Cs_[1] + Cb_[1] * ab_ * (1-as_) ,
-      Cs_[2] + Cb_[2] * ab_ * (1-as_) 
-    ];
-    let  ao_ = as_ + ab_ * (1-as_);
+    let prodRgbK = (c1,k)=>({r: c1.r*k, g: c1.g*k, b: c1.b*k});
+    let prodRgb = (c1,c2)=>({r: c1.r*c2.r, g: c1.g*c2.g, b: c1.b*c2.b});
+    let somRgb = (c1,c2)=>({r: c1.r+c2.r, g: c1.g+c2.g, b: c1.b+c2.b});
 
-    log("couleur écran du clearColor  : "+ co_[0] + "," + co_[1] + "," + co_[2] + "," + ao_);
- 
+    let dec3 = x=>Math.round(x*1000)*0.001;
+
+
+    let cs= {r: 0.27, g: 0.42, b: 0.18};
+    let as= 0.6;
+    let Cb= {r: 0.106, g: 0.7, b: 0.392};
+    let ab= 1;
+
+    let co= somRgb(
+      cs,
+      prodRgbK(
+        Cb,
+        ab*(1-as)
+        )
+      );
+    log("couleur écran du clearColor  : "+ co.r.toFixed(3) + " , " + co.g.toFixed(3) + " , " + co.b.toFixed(3) );
+
+
     gl.viewport(0,0,WebGLCanvas.width,WebGLCanvas.height);
 
     let u_FragColor = gl.getUniformLocation(shaderProgram, 'u_fragColor');
@@ -141,17 +152,18 @@
 
     - on applique cette couleur résultante (attention, elle est prémultipliée)
       sur la couleur du canvas :
-      co = cs + Cb ab (1-as) // on a posé cs et non Cs as
+      co = cs + Cb ab (1-as) // on a posé cs (= Cs * as)
          = (0.3229 , 0.1764 , 0.0324 ) + ( 0.106 , 0.7 , 0.392) * 1.0 * (1-0.61)
          = 0.36424 ,  0.449 , 0.18528     
 
       paint .net donne : (0.3647 , 0.447 , 0.184) ! pareil !!  youpi de ouf
     */
-
-    //calcul couleur écran du carré rouge :
-    log("color(RGBA) = (sourceColor * sfactor) + (destinationColor * dfactor)"); 
+    //log("color(RGBA) = (sourceColor * sfactor) + (destinationColor * dfactor)"); 
     let sourceColor={r:0.5 , g:0 , b:0, a:0.5};
+
     let destinationColor = {r: 0.27, g: 0.42, b: 0.18, a: 0.6};
+    //à faire : destinationColor={r:clearColor.r,b:clearColor.b,..}
+
     let sfactor = {  //SRC_ALPHA
       r: sourceColor.a,
       g: sourceColor.a,
@@ -162,28 +174,20 @@
     let dfactor = //DST_COLOR
       destinationColor;
   
-    let prod = (c1,c2)=>({r: c1.r*c2.r, g: c1.g*c2.g, b: c1.b*c2.b, a: c1.a*c2.a});
-    let som = (c1,c2)=>({r: c1.r+c2.r, g: c1.g+c2.g, b: c1.b+c2.b, a: c1.a+c2.a});
-
-    let prodRgbK = (c1,k)=>({r: c1.r*k, g: c1.g*k, b: c1.b*k});
-    let prodRgb = (c1,c2)=>({r: c1.r*c2.r, g: c1.g*c2.g, b: c1.b*c2.b});
-    let somRgb = (c1,c2)=>({r: c1.r+c2.r, g: c1.g+c2.g, b: c1.b+c2.b});
-
-
     let colorRGBA= som(
       prod(sourceColor,sfactor),
       prod(destinationColor,dfactor)
     );
-    log2(colorRGBA);
+
     //calcul du compositing :
     //co = cs + Cb ab (1-as) ; on a posé cs et non Cs as
     // cs et as sont le résultat colorRGBA
-    let cs= {r: colorRGBA.r , g: colorRGBA.g , b: colorRGBA.b};
-    let as= colorRGBA.a;
+    cs= {r: colorRGBA.r , g: colorRGBA.g , b: colorRGBA.b};
+    as= colorRGBA.a;
     // Cb et ab sont la couleur du canvas , background-color: rgb(27,177,100);
-    let Cb={r: 27/255 , g: 177/255, b: 100/255};
-    let ab= 1;
-    let co= somRgb(
+    Cb={r: 27/255 , g: 177/255, b: 100/255};
+    ab= 1;
+    co= somRgb(
       cs,
       prodRgbK(
         Cb,
@@ -191,48 +195,95 @@
         )
       );
 
-    let dec3 = x=>Math.round(x*1000)*0.001;
+    log("couleur écran du premier carré, en bas :")
+    log2({r: co.r.toFixed(2), g: co.g.toFixed(2), b: co.b.toFixed(2)});
 
-    log2({r: dec3(co.r), g: dec3(co.g), b: dec3(co.b)});
-
-  gl.uniform4f(u_FragColor, 0,1.0,0,0.5);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    gl.uniform4f(u_FragColor, 0,1.0,0,0.5);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
       -1+7/7, -1+11/7,
       -1+7/7,-1+5/7,
        -1+13/7,-1+5/7,
        -1+13/7, -1+11/7 
     ]), gl.STATIC_DRAW);
-  gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT,0);
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT,0);
+
     /*
-    calcul de la couleur du carré vert sur le carré rouge :
-      paint .net donne ( 0.145 , 0.54 , 0.145 )
-
-    - on va d'abord (1) calculer le blending du carré vert sur le 
-      blending du carré rouge sur le clearColor.
-      la couleur résultante sera composée (2) avec la couleur du canvas
-
-      (1) 
-        a - blending carré rouge sur clearColor :
-          cette couleur a été calculée dans le 1er gl_FragColor.
-         
-          =   0.3229 , 0.1764 , 0.0324 , 0.61
-
-        b - blending de carré vert sur la couleur obtenue (a)
-          color(RGBA)= (0, 0.5, 0, 0.5) * SRC_ALPHA + (0.3229 , 0.1764 , 0.0324 , 0.61) * DST_COLOR
-                     =  (0, 0.5, 0, 0.5) * 0.5 +  (0.3229 , 0.1764 , 0.0324 , 0.61) *  (0.3229 , 0.1764 , 0.0324 , 0.61)
-                     = 0.104 , 0.281 , 0.001 , 0.6221
-            readPixels donne : 0.106,0.282,0,0.627
-
-      2/ composition de la couleur calculée en 1) avec la couleur du canvas :
-
-        co = (0.104 , 0.281 , 0.001 ) + ( 0.106 , 0.7 , 0.392) * (1-O.6221)
+    //calcul couleur 2e carré sur 1er carré : 
+    1/blending 1er carré  sur clearColor :
+      blendFunc = gl_FragColor * SRC_ALPHA + clearColor * DST_COLOR
+                = (0.5, 0, 0, 0.5) * 0.5 + (0.27 , 0.42 , 0.18 , 0.6 ) * ( 0.27 , 0.42 , 0.18 , 0.6)
+          (a)      = 0.32 , 0.18 , 0.03 , 0.61
+      
+    2/blending carré vert sur couleur obtenue (a)
+      blendFunc =  gl_FragColor * SRC_ALPHA +  destinationColor * DST_COLOR
+                =  (0, 0.5, 0, 0.5) * 0.5 +  (0.32, 0.18, 0.03, 0.61) * (0.32, 0.18, 0.03, 0.61)
+          (b)     = 0.104 , 0.281 , 0.001 , 0.6221
+      
+      3/composition de la couleur obtenue (b) avec la couleur du canvas
+      co = cs + Cb * ab * (1-as)
+         // cs est la couleur prémultipliée (b) , Cb est la couleur du canvas
+      co = (0.104 , 0.281 , 0.001 ) + ( 0.106 , 0.7 , 0.392) * (1-0.6221)
            = 0.144 , 0.545 , 0.148
+*/
 
-           
+  //1-a : blending 1er carré sur clearColor
+  sourceColor={r:0.5 , g:0 , b:0, a:0.5};
+  destinationColor = {r: 0.27, g: 0.42, b: 0.18, a: 0.6};
+
+  sfactor = {  //SRC_ALPHA
+    r: sourceColor.a,
+    g: sourceColor.a,
+    b: sourceColor.a,
+    a: sourceColor.a
+  }; 
+
+  dfactor = //DST_COLOR
+    destinationColor;
+  
+  colorRGBA= som(
+    prod(sourceColor,sfactor),
+    prod(destinationColor,dfactor)
+  );
+  //colorRGBA = ( 0.32 , 0.18 , 0.03 , 0.61 )
+
+  //1-b : blending 2e carré sur couleur obtenue en 1-a
+  //blendFunc =  gl_FragColor * SRC_ALPHA +  destinationColor * DST_COLOR
+  //             =  (0, 0.5, 0, 0.5) * 0.5 +  (0.32, 0.18, 0.03, 0.61) * (0.32, 0.18, 0.03, 0.61)
+  //     (b)     = 0.104 , 0.281 , 0.001 , 0.6221
+
+    sourceColor={ r: 0 , g: 0.5 , b: 0 , a: 0.5 };
+    destinationColor= { r: colorRGBA.r , g: colorRGBA.g , b: colorRGBA.b , a: colorRGBA.a };
+
+    sfactor= {r: sourceColor.a , g: sourceColor.a , b: sourceColor.a , a: sourceColor.a};
+    dfactor= destinationColor;
+
+    colorRGBA= som(
+      prod(sourceColor,sfactor),
+      prod(destinationColor,dfactor)
+    );
+
+    //calcul du compositing :
+    //co = cs + Cb ab (1-as) ; on a posé cs et non Cs as
+    // cs et as sont le résultat colorRGBA
+    cs= {r: colorRGBA.r , g: colorRGBA.g , b: colorRGBA.b};
+    as= colorRGBA.a;
+    // Cb et ab sont la couleur du canvas , background-color: rgb(27,177,100);
+    Cb={r: 27/255 , g: 177/255, b: 100/255};
+    ab= 1;
+    co= somRgb(
+      cs,
+      prodRgbK(
+        Cb,
+        ab*(1-as)
+        )
+      );
+
+    log("couleur écran du 2e carré sur 1er carré :")
+    log2({r: co.r.toFixed(2), g: co.g.toFixed(2), b: co.b.toFixed(2)});
 
 
 
-    */
+    
 
 
     gl.uniform4f(u_FragColor, 0,0,1.0,0.5);
@@ -270,23 +321,22 @@
     }
 
 
-function log2(args) {
-  const elem = document.createElement("pre");
-  elem.innerHTML = [...Object.values(args)].join(' ');
-  document.body.appendChild(elem);
-}
+    function log2(args) {
+      const elem = document.createElement("pre");
+      elem.innerHTML = [...Object.values(args)].join(' ');
+      document.body.appendChild(elem);
+    }
 
- //   function log(...args) {
-  function log(...args) {
+    //   function log(...args) {
+    function log(...args) {
       const elem = document.createElement("pre");
       //elem.textContent = [...args].join(' ');
-     // elem.textContent = [...Object.values(args)].join(' ');
-            elem.innerHTML = [...Object.values(args)].join(' ');
-//console.log(Object.values(args));
-//console.log(args);
-         //   elem.innerHTML = [...args].join(' ');
-
-       //document.getElementById("demo").innerHTML = person; 
+      // elem.textContent = [...Object.values(args)].join(' ');
+      elem.innerHTML = [...Object.values(args)].join(' ');
+      //console.log(Object.values(args));
+      //console.log(args);
+      //   elem.innerHTML = [...args].join(' ');
+      //document.getElementById("demo").innerHTML = person; 
       document.body.appendChild(elem);
     }
 </script>
