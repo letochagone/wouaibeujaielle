@@ -12,16 +12,23 @@
     height: 200px;
   }
 
-  #WebGLCanvas {
-    background-color: rgb(27,177,100);
-    /* = ( 0.106 , 0.7 , 0.392 )*/
-  }
+  
 
 </style>
 <body>
   <canvas id="WebGLCanvas"></canvas>
 
   <script>
+    //à faire
+    // remplacer clearColorR,G,B,A par une lecture des valeurs du clearColor
+    let canvasCssColor={r:27, g:177, b:100};
+
+    document.getElementById("WebGLCanvas").style.backgroundColor = 'rgb(' + [
+      canvasCssColor.r,
+      canvasCssColor.g,
+      canvasCssColor.b
+    ].join(',') + ')';
+
     const canvas = document.querySelector("#WebGLCanvas");
     canvas.width = 7;
     canvas.height = 7;
@@ -84,14 +91,19 @@
     gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(coord);
 
-    {
-      let r=0.45;
-      let g=0.7;
-      let b=0.3;
-      let a=0.6;
-      gl.clearColor( r*a, g*a, b*a, a ); // = ( 0.27 , 0.42 , 0.18 , 0.6)
-      gl.clear(gl.COLOR_BUFFER_BIT);
-    }
+    
+    let clearColorR=0.45;
+    let clearColorG=0.7;
+    let clearColorB=0.3;
+    let clearColorA=0.6;
+    gl.clearColor(
+      clearColorR*clearColorA,
+      clearColorG*clearColorA,
+      clearColorB*clearColorA,
+      clearColorA
+    ); // = ( 0.27 , 0.42 , 0.18 , 0.6)
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    
 
     let prod = (c1,c2)=>({r: c1.r*c2.r, g: c1.g*c2.g, b: c1.b*c2.b, a: c1.a*c2.a});
     let som = (c1,c2)=>({r: c1.r+c2.r, g: c1.g+c2.g, b: c1.b+c2.b, a: c1.a+c2.a});
@@ -103,14 +115,25 @@
     let dec3 = x=>Math.round(x*1000)*0.001;
 
     //compositing du clearColor
-    let cs= {r: 0.27, g: 0.42, b: 0.18}; //clearColor(...)
-    let as= 0.6;
+    let cs= {
+      r: clearColorR*clearColorA,
+      g: clearColorG*clearColorA,
+      b: clearColorB*clearColorA
+      };
+    let as= clearColorA;
   
-    let Cb= {r: 0.106, g: 0.7, b: 0.392}; //#canvas {background-color : ...}
-    let ab= 1;
+    //let Cb= {r: 0.106, g: 0.7, b: 0.392}; //#canvas {background-color : ...}
+    let Cb= {
+      r:  canvasCssColor.r / 255,
+      g:  canvasCssColor.g / 255,
+      b:  canvasCssColor.b / 255
+    };
+
+    let ab= 1; // ab = 1 car couleur du canvas est fixée en CSS par RGB et non RGBA
 
     let co= somRgb( cs, prodRgbK( Cb, ab*(1-as) ) );
     log("couleur écran du clearColor  : "+ co.r.toFixed(3) + " , " + co.g.toFixed(3) + " , " + co.b.toFixed(3) );
+    //Paint net donne :  80,178,86
 
 
 
@@ -131,7 +154,12 @@
     //            = sourceColor * SRC_ALPHA + destinationColor * DST_COLOR
 
     let sourceColor={r:0.5 , g:0 , b:0, a:0.5};
-    let destinationColor = {r: 0.27, g: 0.42, b: 0.18, a: 0.6};//à faire : destinationColor={r:clearColor.r,b:clearColor.b,..}
+    let destinationColor = {
+      r: clearColorR * clearColorA, //0.27,
+      g: clearColorG * clearColorA,//0.42,
+      b: clearColorB * clearColorA,//0.18,
+      a: clearColorA
+    };
 
     let sfactor = {  //SRC_ALPHA
       r: sourceColor.a,
@@ -151,7 +179,11 @@
     // cs et as est la colorRGBA , PREMULTIPLIEE !! 
     cs= {r: colorRGBA.r , g: colorRGBA.g , b: colorRGBA.b};
     as= colorRGBA.a;
-    Cb={r: 27/255 , g: 177/255, b: 100/255};
+    Cb= {
+      r:  canvasCssColor.r / 255,
+      g:  canvasCssColor.g / 255,
+      b:  canvasCssColor.b / 255
+    };
     ab= 1;
     co= somRgb(
       cs,
@@ -192,7 +224,13 @@
     //   = 0.144 , 0.545 , 0.148
 
     sourceColor={r:0.5 , g:0 , b:0, a:0.5};
-    destinationColor = {r: 0.27, g: 0.42, b: 0.18, a: 0.6};
+    destinationColor= {
+      r: clearColorR * clearColorA, //0.27,
+      g: clearColorG * clearColorA,//0.42,
+      b: clearColorB * clearColorA,//0.18,
+      a: clearColorA
+    };
+
     sfactor = {  //SRC_ALPHA
       r: sourceColor.a,
       g: sourceColor.a,
@@ -233,7 +271,11 @@
     cs= {r: colorRGBA.r , g: colorRGBA.g , b: colorRGBA.b};
     as= colorRGBA.a;
     // Cb et ab sont la couleur du canvas , background-color: rgb(27,177,100);
-    Cb={r: 27/255 , g: 177/255, b: 100/255};
+    Cb= { 
+      r:  canvasCssColor.r / 255,
+      g:  canvasCssColor.g / 255,
+      b:  canvasCssColor.b / 255
+    };
     ab= 1;
     co= somRgb(
       cs,
@@ -290,7 +332,11 @@
     cs= {r: colorRGBA.r , g: colorRGBA.g , b: colorRGBA.b};
     as= colorRGBA.a;
     // Cb et ab sont la couleur du canvas , background-color: rgb(27,177,100);
-    Cb={r: 27/255 , g: 177/255, b: 100/255};
+    Cb= { 
+      r:  canvasCssColor.r / 255,
+      g:  canvasCssColor.g / 255,
+      b:  canvasCssColor.b / 255
+    };
     ab= 1;
     co= somRgb(
       cs,
@@ -351,5 +397,3 @@
 </script>
 </body>
 </html>
-
-
