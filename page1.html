@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>page1</title>
+</head>
+<style>
+  #lescanvas {
+    background: black;
+  }
+
+  #canvas1 {
+    background-color: rgba(55, 122, 190, 0.7);
+    xposition:  absolute;
+    xtop:  100px;
+    xleft: 100px;
+  }
+  #canvas2 {
+    background-color: rgba(200, 100, 50, 0.3);
+    position: relative;
+    top:  50px;
+    left: -100px;
+  }
+  #deux {
+    position: absolute;
+    top: 150px;
+    left: 150px;
+    z-index: 5;
+  }
+  #un {
+    xposition: absolute;
+    xtop: 100px;
+    xleft: 100px;
+    xz-index: 5;
+  }
+
+
+
+</style>
+<body>
+  <div id="un">UN</div>
+  <div id="deux">DEUX</div>
+  <div id="lescanvas">
+    <canvas id="canvas1"></canvas>
+    <canvas id="canvas2"></canvas>
+  </div>
+  <canvas id="lecanvas"></canvas>
+
+<p>le canvas UN a la couleur :</p>
+<p>rgba= rgba(55, 122, 190, 0.7)</p>
+<p>le canvas DEUX a la couleur :</p>
+<p>rgba= rgba(200, 100, 50, 0.3)</p>
+<p>
+  calcul de la couleur du UN sur le fond noir :<br>
+    co = Cs as + Cb ab (1-as)<br>
+       = ( 55/255 , 122/255 , 190/255 ) * 0.7 + (0,0,0) * 1 * (1-0.7)<br>
+       = 0.15098, 0.33490, 0.52156 <br>
+  une capture écran donne la couleur : 39 , 86 , 133<br>
+  39/255 = 0.15294<br>
+86/255 = 0.33725<br>
+133/255=  0.5215<br>
+
+</p>
+<p>
+  calcul de la couleur du DEUX sur UN :<br>
+  co = Cs as + Cb ab (1-as) <br>
+  = (200/255 , 100/255 , 50/255) * 0.3 + (0.151 , 0.335 , 0.521) * 1  * (1-0.3)<br>
+= ( 0.34... ,  0.35... , 0.42...)<br>
+<br>
+autre méthode de calcul : <br>
+couleur du DEUX sur couleur du UN :<br>
+co = (200/255 , 100/255 , 50/255) * 0.3 + (55/255 , 122/255 , 190/255) * 0.7 * (1-0.3)<br>
+=  0.3409 , 0.3520 0.4239<br>
+ao = as + ab ( 1-as)<br>
+  = 0.79<br>
+  application de cette couleur sur la couleur du fond :<br>
+  co est alphaprémultiplié, pour calculer la composition avec la couleur du &lt;div&gt; <br>
+  on applique la formule : co = cs + Cb ab (1-as)<br>
+  co = (0.3409 , 0.3520 , 0.4239) + (0,0,0) * 1 * (1-0.79)<br>
+
+
+Paint .net donne : 0.34.. , 0.35.. , 0.42..
+
+
+</p>
+  <script type="text/javascript">
+    const canvas = document.getElementById('lecanvas');
+const ctx = canvas.getContext('2d');
+
+ctx.globalCompositeOperation = 'xor';
+
+ctx.fillStyle = 'rgba(122,50,200,0.5)';
+ctx.fillRect(10, 10, 100, 100);
+
+ctx.fillStyle = 'red';
+ctx.fillRect(50, 50, 100, 100);
+
+  </script>
+</body>
+</html>
+
