@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<style>
+ canvas {
+  xbackground-color: rgb(255,255,255);
+  image-rendering: pixelated;
+  width: 300px;
+  height: 300px;
+}
+</style>
+<body>
+<canvas id="A"  width="5" height="5"></canvas>
+<canvas id="C"  width="5" height="5"></canvas>
+
+
+
+
+<script>
+  let canvasA = document.getElementById('A');
+  let canvasC = document.getElementById('C');
+
+
+  let ctx_A = canvasA.getContext('2d');
+  let ctx_C = canvasC.getContext('2d');
+
+
+  ctx_A.fillStyle='rgba(255,0,0,0.4)';
+  ctx_A.fillRect(1,1,4,4);
+
+  ctx_A.fillStyle='rgba(100,100,0,0.7)';
+  ctx_A.fillRect(0,0,3,3);
+
+// paint .net donne (1, 0.878... , 0.878...)
+
+  var Cs_=[1,0,0];
+  var as_=0.4*0.3;
+  var Cb_=[1,1,1];
+  var ab_=1;
+
+  var co_=[
+    Cs_[0]*as_ + Cb_[0] * ab_ * (1-as_) ,
+    Cs_[1]*as_ + Cb_[1] * ab_ * (1-as_) ,
+    Cs_[2]*as_ + Cb_[2] * ab_ * (1-as_) 
+  ];
+  var  ao_ = as_ + ab_ * (1-as_);
+
+  console.log("couleur avec globalAlpha : "+ co_[0] + "," + co_[1] + "," + co_[2] + "," + ao_);
+
+
+  Cs_=[100/255,100/255,0];
+  as_=0.7*0.3;
+  Cb_=[1,0.88,0.88];
+  ab_=1;
+
+  co_=[
+    Cs_[0]*as_ + Cb_[0] * ab_ * (1-as_) ,
+    Cs_[1]*as_ + Cb_[1] * ab_ * (1-as_) ,
+    Cs_[2]*as_ + Cb_[2] * ab_ * (1-as_) 
+  ];
+  ao_ = as_ + ab_ * (1-as_);
+
+  //console.log("couleur petit rectangle : "+ co_[0] + "," + co_[1] + "," + co_[2] + "," + ao_);
+
+
+/*
+var canvasA = document.getElementById('A');
+var canvasB = document.getElementById('B');
+
+// The target canvas
+var canvasC = document.getElementById('C');
+var ctx = canvasC.getContext('2d');
+ctx.drawImage(canvasA, 0,0);
+ctx.globalAlpha = 0.5;
+ctx.drawImage(canvasB,0, 0);
+*/
+
+
+ //ctx_C.globalAlpha = 1;
+//ctx_C.drawImage(canvasA, 0,0);
+
+
+console.log("ctx_A.getImageData :");
+console.log(ctx_A.getImageData(0, 0, 5,5));
+
+
+/*
+3x 99,99,0,179
+2 x 0,0,0,0
+1 x 99,99,0,179
+2x 122,85,0,209
+
+*/
+</script>
+<pre>
+  >>console.log(ctx_A.getImageData(0, 0, 5,5));
+  donne le résultat :
+  3x (99,99,0,179)
+  2x (0,0,0,0)
+  1x (99,99,0,179)
+  2x (122,85,0,209)
+  ...
+  le dernier résultat (122,85,0,209) correspond la couleur calculée
+  selon le simple alpha compositing
+  https://www.w3.org/TR/compositing-1/#simplealphacompositing
+
+  co = Cs x αs + Cb x αb x (1 - αs)
+
+    co: the premultiplied pixel value after compositing
+    Cs: the color value of the source graphic element being composited
+    αs: the alpha value of the source graphic element being composited
+    Cb: the color value of the backdrop
+    αb: the alpha value of the backdrop
+
+ici le Cs, "source graphic element" est le dernier rectangle dessiné :  fillStyle='rgba(100,100,0,0.7)';
+ce qui donne en valeur de l'intervalle [0,1] :
+Cs = ( 0.39 , 0.39 , 0) 
+as = 0.7
+
+le Cb "backdrop" est le premier rectangle :
+  fillStyle='rgba(255,0,0,0.4)'
+ce qui donne en valeur [0,1] :
+Cb = ( 1 , 0 , 0 )
+ab = 0.4
+
+on calcule co :
+  co = ( 0.39 , 0.39 , 0) * 0.7 + (1,0,0) * 0.4 * (1-0.7)
+     = ( 0.3945 , 0.2745 , 0 )
+
+(phrase tirée de la page w3.org/TR/compositing-1) 
+The formula for the resultant alpha of the composite is
+
+αo = αs + αb x (1 - αs)
+
+ici cela donne :
+
+αo = 0.7 + 0.4 * ( 1-0.7)
+   = 0.82
+
+maintenant nous obtenons la couleur composite :
+Calculating the color component of the resultant composite :
+
+Co = co / αo
+   = ( 0.3945 , 0.2745 , 0 ) / 0.82
+
+on multiplie Co et αo par 255
+Co * 255 = (
+  0.3945/0.82 * 255
+  0.2745/0.82  * 255
+  0 * 255 )
+  = (122 , 85 , 0) 
+αo * 255 = 209
+
+on trouve le même résultat qu'avec le getImageData !
+
+</pre>
+
+</body>
+</html>
+
+
