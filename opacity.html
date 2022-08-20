@@ -86,8 +86,21 @@
     Cb = A = ( 50/255 , 80/255 , 200/255 ) ; ab = 0.7<br>
     
     co = ( 0.41	, 0.51 , 0.34) ao  = 0.88 <br>
+   <b>On applique opacity : on multiplie co et ao par 'opacity:0.8' </b> <br>
+    co = ( 0.41	* 0.8 , 0.51 * 0.8 , 0.34 * 0.8) ; ao  = 0.88 * 0.8 <br>
+    co = ( 0.33 , 0.41 , 0.27 ) ; ao = 0.704
     On démultiplie co. <br>
     Co = co / ao = ( 0.46 , 0.58 , 0.38) <br>
+    On compose avec la couleur du div 'background' : <br>
+    Cs = ( 0.46 , 0.58 , 0.38) ; as = 0.7 <br>
+    Cb = ( 100/255 , 200/255 , 50/255 ) ab = 0.5 <br>
+    co = ( 0.45	, 0.62 , 	0.35 ) ao = 0.852 <br>
+    On démultiplie co. <br> et on compose avec le fond , couleur du body (1,1,1,1)<br>
+    co = 0.53	0.67	0.45 <br>
+
+    
+
+    
     <b>On applique opacity : on multiplie co et ao par 'opacity:0.8' </b> <br>
     Co = ( 0.46 , 0.58 , 0.38) * 0.8 = ( 0.37 ,	0.46 , 0.31 ) <br>
     ao = 0.88 * 0.8 = 0.704 <br>
