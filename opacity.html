@@ -2,6 +2,10 @@
 <html>
 <head>
 <title>HTML CSS JS</title>
+  
+  <style>
+
+  </style>
 </head>
 <body>
   <p>calcul de la couleur d'un bloc avec 'opacity'</p>
@@ -11,7 +15,7 @@
     
     <div
          style="
-                opacity: 0.5;
+                opacity: 0.8;
                 background: rgba(50,80,200,0.7);
                 width: 100px;
                 height:100px;"
@@ -19,6 +23,32 @@
     </div>
   
   </div>
+  <p>
+    le petit div est de couleur A = rgba(50,80,200,0.7)<br>
+    Il a aussi une "opacity: 0.8"
+    <br>
+    il est au-dessus d'un div de couleur B = rgba(100,200,50,0.5)
+    <br>
+    on calcule la couleur A sur B :<br>
+    >>>> co = Cs * as  + Cb * ab * ( 1 - as )<br>
+    >>>> ao = as + ab * ( 1 - as) <br>
+    Cs = (50/255 ,80/255 ,200/255)<br>
+    as = 0.7 <b>* opacity</b><br>
+    Cb = (100/255 , 200/255 , 50/255) et ab= 0.5<br> 
+    <br>
+    co	= ( 0.20 , 0.35 , 0.48 ) <br>
+    ao =  0,78<br>
+    co est prémultiplié. Pour calculer la couleur sur le fond (couleur du "body"), on le démultiplie avant le calcul "simple alpha compositing"
+<br>
+    Co =  co / ao <br>
+    Co=	( 0.25 , 0.45 , 0.62 ) ; 
+    ao = 0.78<br>
+    On reprendre la formule co = Cs * as  + Cb * ab * ( 1 - as )<br>
+    avec Cs = Co et Cb = couleur du body<br>
+    Cb = ( 1 , 1 , 1) ; ab = 1<br>
+    co = ( 0.25 , 0.45 , 0.62 ) * 0.78 + (1 , 1 , 1 ) * 1 * ( 1 - 0.78)<br>
+    
+  </p>
     
   
 </body>
