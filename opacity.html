@@ -50,6 +50,58 @@
     co = 0.42	0.57	0.70<br>
 
   </p>
+  
+  
+  <p>calcul de la couleur d'un bloc avec 'opacity'</p>
+  <div
+       id="background"
+       style="width: 200px; height: 200px; background: rgba(100,200,50,0.5);">
+    
+    <div
+         style="
+                opacity: 0.8;
+                background: rgba(50,80,200,0.7);
+                width: 100px;
+                height:100px;"
+         id="divOpacity">
+      <div
+           style="
+                  background: rgba(150,180,50,0.6);
+                  width: 50px;
+                  height: 50px;
+                  "
+           id="div2Opacity">
+        
+      </div>
+    </div>
+  
+  </div>
+  <p>
+    le 'div' bleu et le style 'opacity'. On la note A. <br>
+    Il contient une div vert foncé. Notons là B.<br>
+    On cherche à calculer la couleur écran de B.<br>
+    co = Cs * as + Cb * ab * ( 1 - as) <br>
+    ao = as + ab * ( 1 - as)<br>
+    Cs = B = ( 150/255 , 180/255 , 50/255) ; as = 0.6 <br>
+    Cb = A = ( 50/255 , 80/255 , 200/255 ) ; ab = 0.7<br>
+    
+    co = ( 0.41	, 0.51 , 0.34) ao  = 0.88 <br>
+    On démultiplie co. <br>
+    Co = co / ao = ( 0.46 , 0.58 , 0.38) <br>
+    <b>On applique opacity : on multiplie co et ao par 'opacity:0.8' </b> <br>
+    Co = ( 0.46 , 0.58 , 0.38) * 0.8 = ( 0.37 ,	0.46 , 0.31 ) <br>
+    ao = 0.88 * 0.8 = 0.704 <br>
+    On compose avec le fond :
+    
+
+    
+    
+
+    
+
+    
+ 
+  </p>
     
   
 </body>
