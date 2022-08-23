@@ -77,9 +77,10 @@
   
   </div>
   <p>
-    le 'div' bleu et le style 'opacity'. On la note A. <br>
-    Il contient une div vert foncé. Notons là B.<br>
+    le 'div' bleu a le style 'opacity'. On le note A. <br>
+    Il contient un div vert foncé. Notons le B.<br>
     On cherche à calculer la couleur écran de B.<br>
+    On va d'abord calculer la composition de B sur A, puis la composition de ce résultat sur la couleur du body.<br>
     co = Cs * as + Cb * ab * ( 1 - as) <br>
     ao = as + ab * ( 1 - as)<br>
     Cs = B = ( 150/255 , 180/255 , 50/255) ; as = 0.6 <br>
