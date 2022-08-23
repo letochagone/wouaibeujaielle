@@ -104,16 +104,19 @@
   <h1>Calcul couleur d'un DIV avec opacity contenant 2 DIV juxtaposés</h1> 
   
   <div
+     id="opaque" 
      style=
      "opacity: 0.6; background-color: rgba( 155 , 66 , 200 , 0.5 );
       width:200px; height: 200px;
       ">
     <div 
+       id= "div1" 
        style=
        "background-color: rgba( 0, 77 , 100 , 0.8 );
         width: 200px; height: 200px;
         ">
       <div
+         id= "div2" 
          style=
          "background-color: rgba( 200 , 255, 0 , 0.5 );
           width: 200px; height: 200px;
@@ -122,6 +125,33 @@
       </div>
     </div>
   </div>
+  
+  <p>
+    (1) On calcule la couleur composite de div2 sur div1 :<br>
+    co = rgb_div2 * alpha_div2 + rgb_div1 * alpha_div1 * ( 1 - alpha_div2 ) <br>
+    ao = alpha_div2 + alpha_div1 * ( 1 - alpha_div2 ) <br>
+    co = (200/255 , 255/255 , 0 ) * 0.5 + (0, 77/255 , 100/255) * 0.8 * ( 1 - 0.5 ) <br>
+    ao = 0.5 + 0.8 * ( 1 - 0.5) <br>
+    co = ( 0.39 , 0.62 , 0.16 )  <br>
+    ao = 0.9 <br>
+    (2) on calcul la couleur composite de la couleur obtenue en (1) ( prémultipliée) sur la couleur du div #opaque <br>
+    co = ( 0.39 , 0.62 , 0.16 )  + ( 155/255 , 66/255 , 200/255 ) * 0.5 *  ( 1 - 0.9 ) <br>
+    ao = 0.9 + 0.5 * ( 1 - 0.9 )  <br>
+    co = ( 0.42 , 0.63 , 0.20 )  <br>
+    ao = 0.95 <br>
+    (3) on multiplie la couleur (prémultipliée) et le alpha obtenus au (2) par la valeur opacity : <br>
+    co = ( 0.42 * 0.6 , 0.63 * 0.6 , 0.20 * 0.6 )  <br>
+    ao = 0.95 * 0.6 <br>
+    co = ( 0.25 , 0.38 , 0.12 )  <br>
+    ao = 0.57 <br>
+    (4) on compose la couleur et le alpha obtenus en (3) avec la couleur du body <br>
+    co = ( 0.25 , 0.38 , 0.12 )  + ( 1 , 1 , 1 ) * 1 * ( 1 - 0.57 ) <br>
+    ao = 0.57 + 1 * ( 1 - 0.57 ) <br>
+    co = ( 0.68 , 0.81 , 0.55 )  <br>
+    ao  = 1  <br>
+    
+    
+  </p>
     
   <h1>Opacity & Sibling</h1>
   <div
