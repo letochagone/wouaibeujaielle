@@ -8,98 +8,10 @@
   </style>
 </head>
 <body>
-  <h1>calcul de la couleur d'un bloc avec 'opacity'</h1>
-  <div
-       id="background"
-       style="width: 200px; height: 200px; background: rgba(100,200,50,0.5);">
-    
-    <div
-         style="
-                opacity: 0.8;
-                background: rgba(50,80,200,0.7);
-                width: 100px;
-                height:100px;"
-         id="divOpacity">
-    </div>
-  
-  </div>
-  <p>
-    le petit div est de couleur A = rgba(50,80,200,0.7)<br>
-    Il a aussi une "opacity: 0.8"
-    <br>
-    il est au-dessus d'un div de couleur B = rgba(100,200,50,0.5)
-    <br>
-    on calcule la couleur A sur B :<br>
-    >>>> co = Cs * as  + Cb * ab * ( 1 - as )<br>
-    >>>> ao = as + ab * ( 1 - as) <br>
-    Cs = (50/255 ,80/255 ,200/255)<br>
-    as = 0.7 <b>* opacity</b><br>
-    Cb = (100/255 , 200/255 , 50/255) et ab= 0.5<br> 
-    <br>
-    co	= ( 0.20 , 0.35 , 0.48 ) <br>
-    ao =  0,78<br>
-    co est prémultiplié. Pour calculer la couleur sur le fond (couleur du "body"), on le démultiplie avant le calcul "simple alpha compositing"
-<br>
-    Co =  co / ao <br>
-    Co=	( 0.25 , 0.45 , 0.62 ) ; 
-    ao = 0.78<br>
-    On reprendre la formule co = Cs * as  + Cb * ab * ( 1 - as )<br>
-    avec Cs = Co et Cb = couleur du body<br>
-    Cb = ( 1 , 1 , 1) ; ab = 1<br>
-    co = ( 0.25 , 0.45 , 0.62 ) * 0.78 + (1 , 1 , 1 ) * 1 * ( 1 - 0.78)<br>
-    co = 0.42	0.57	0.70<br>
-
-  </p>
-  
-  
-  <p>calcul de la couleur d'un bloc avec 'opacity'</p>
-  <div
-       id="background"
-       style="width: 200px; height: 200px; background: rgba(100,200,50,0.5);">
-    
-    <div
-         style="
-                opacity: 0.8;
-                background: rgba(50,80,200,0.7);
-                width: 100px;
-                height:100px;"
-         id="divOpacity">
-      <div
-           style="
-                  background: rgba(150,180,50,0.6);
-                  width: 50px;
-                  height: 50px;
-                  "
-           id="div2Opacity">
-        
-      </div>
-    </div>
-  
-  </div>
-  <p>
-    le 'div' bleu a le style 'opacity'. On le note A. <br>
-    Il contient un div vert foncé. Notons le B.<br>
-    On cherche à calculer la couleur écran de B.<br>
-    On va d'abord calculer la composition de B sur A, puis la composition de ce résultat sur la couleur du body.<br>
-    co = Cs * as + Cb * ab * ( 1 - as) <br>
-    ao = as + ab * ( 1 - as)<br>
-    Cs = B = ( 150/255 , 180/255 , 50/255) ; as = 0.6 <br>
-    Cb = A = ( 50/255 , 80/255 , 200/255 ) ; ab = 0.7<br>
-    
-    co = ( 0.41	, 0.51 , 0.34) ao  = 0.88 <br>
-   <b>On applique opacity : on multiplie co et ao par 'opacity:0.8' </b> <br>
-    co = ( 0.41	* 0.8 , 0.51 * 0.8 , 0.34 * 0.8) ; ao  = 0.88 * 0.8 <br>
-    co = ( 0.33 , 0.41 , 0.27 ) ; ao = 0.704
-    On démultiplie co. <br>
-    Co = co / ao = ( 0.46 , 0.58 , 0.38) <br>
-    On compose avec la couleur du div 'background' : <br>
-    Cs = ( 0.46 , 0.58 , 0.38) ; as = 0.7 <br>
-    Cb = ( 100/255 , 200/255 , 50/255 ) ab = 0.5 <br>
-    co = ( 0.45	, 0.62 , 	0.35 ) ao = 0.852 <br>
-    On démultiplie co. <br> et on compose avec le fond , couleur du body (1,1,1,1)<br>
-    co = 0.53	0.67	0.45 <br>
  
-  </p>
+  
+  
+ 
   
   <h1>Calcul couleur d'un DIV avec opacity contenant 2 DIV juxtaposés</h1> 
   <pre>
@@ -158,16 +70,16 @@
     ao = 0.9 + 0.5 * ( 1 - 0.9 )  <br>
     co = ( 0.42 , 0.63 , 0.20 )  <br>
     ao = 0.95 <br>
-    (3) on multiplie la couleur (prémultipliée) et le alpha obtenus au (2) par la valeur opacity : <br>
-    co = ( 0.42 * 0.6 , 0.63 * 0.6 , 0.20 * 0.6 )  <br>
-    ao = 0.95 * 0.6 <br>
-    co = ( 0.25 , 0.38 , 0.12 )  <br>
-    ao = 0.57 <br>
-    (4) on compose la couleur et le alpha obtenus en (3) avec la couleur du body <br>
-    co = ( 0.25 , 0.38 , 0.12 )  + ( 1 , 1 , 1 ) * 1 * ( 1 - 0.57 ) <br>
-    ao = 0.57 + 1 * ( 1 - 0.57 ) <br>
-    co = ( 0.68 , 0.81 , 0.55 )  <br>
-    ao  = 1  <br>
+    (3) on démultiplie la couleur obtenue :<br>
+    Co = co/ao = ( 0.42 , 0.63 , 0.20 )  / 0.95 <br>
+    Co = ( 0.44 , 0.66 , 0.21 ) <br>
+    (4) on applique la propriété 'opacity' ( = 0.6 ) <br>
+    ao = ao * 0.6 = 0.57 <br>
+    (5) on compose Co et ao avec la couleur du body <br>
+    = Co * ao + ( 1 , 1 , 1 ) * 1 * ( 1 - ao ) <br>
+    = ( 0.25 , 0.38 , 0.12 )  + ( 1 , 1 , 1 ) * 1 * ( 1 - 0.57 ) <br>
+    = ( 0.68 , 0.81 , 0.55 ) <br>
+    
     
     
   </p>
