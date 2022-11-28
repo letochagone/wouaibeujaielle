@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>  
+  <style>
+    .test {
+      width: 400px;
+      height: 400px;
+      
+      background-image:
+        linear-gradient(rgb(55,100,0),rgb(55,100,0)),
+        linear-gradient(rgb(100,255,255),rgb(100,255,255));
+      
+      background-blend-mode: difference,multiply;
+
+      background-color: rgb(200,70,100);
+
+      background-repeat:no-repeat;
+      
+      background-size: 200px 200px;
+
+
+      /*
+      (55,100,0) --- (100,255,255) ---- (200,70,100)
+                  |           |               |
+                  |           --- multiply-----
+                  |                 |
+                  |           (100/255*200/255, 255/255*70/255 , 255/255 * 100/255)
+                  |                 |
+                  ---- difference ---
+                           |
+       ( |55/255-100/255*200/255| , |100/255-70/255| , | 0 - 100/255 | )
+      
+      */
+    }
+
+
+  </style>
+</head>
+<body>
+  <div class="test"></div>
+</body>
+</html>
